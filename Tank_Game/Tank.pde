@@ -2,20 +2,24 @@ class Tank {
   float x, y, w, h, speed, health;
   PImage iTankW, iTankA, iTankS, iTankD;
   char idir;
+  int turretCount, ammo, score;
 
   // constucter
   Tank() {
+    this.speed = 15;
+    this.health = 100;
+    this.ammo = 100;
     x = 100;
     y = 100;
     w = 100;
     h = 100;
-    speed = 100;
-    health = 100;
     iTankW = loadImage("tankW.png");
     iTankA = loadImage("tankA.png");
     iTankS = loadImage("tankS.png");
     iTankD = loadImage("tankD.png");
     idir = 'w';
+    turretCount=1;
+    ammo=1000;
   }
 
   void display() {
@@ -54,4 +58,13 @@ class Tank {
   //    tank1.move('d');
   //  }
   //}
+
+  Boolean intersect(Obstacle o) {
+    float distance = dist(x, y, o.x, o.y);
+    if (distance < 100) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

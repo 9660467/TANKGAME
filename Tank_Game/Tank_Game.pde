@@ -3,20 +3,19 @@ PImage bg;
 Tank tank1;
 ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+ArrayList<PowerUp> powerups = new ArrayList<PowerUp>();
 int score;
-Timer obsTimer;
+Timer obsTimer, puTimer;
 
 void setup() {
   size(1000, 1000);
   bg = loadImage("bg1.png");
   tank1 = new Tank();
-  //obstacles.add(new Obstacle(250, 250));
-  //obstacles.add(new Obstacle(25, 50));
-  //obstacles.add(new Obstacle(50, 25));
   score = 0;
   obsTimer = new Timer(1000);
   obsTimer.start();
-  frameRate(60);
+  puTimer = new Timer(5000);
+  puTimer.start();
 }
 
 void draw() {
@@ -25,28 +24,80 @@ void draw() {
   image(bg, 0, 0);
   tank1.display();
   scorePanel();
+
+  // Distribute object on timer
   if (obsTimer.isFinished()) {
     obstacles.add(new Obstacle(-100, int(random(height)), 2, 10));
     obsTimer.start();
   }
 
-  // Displaying Obstacles
-  for (int i = 0; i < obstacles.size(); i++) {
-    Obstacle obs = obstacles.get(i);
-    obs.display();
-    obs.move();
-    if (obs.reachedSide()) {
-      obstacles.remove(i);
+  // Distribute powerups on a timer
+  if (puTimer.isFinished()) {
+    // Add PowerUp
+    powerups.add(new PowerUp());
+    // Restart Timer
+    puTimer.start();
+  }
+
+  // Display and remove powerups
+  for (int i = 0; i < powerups.size(); i ++) {
+    PowerUp pu = powerups.get(i);
+    pu.display();
+    pu.move();
+    if(pu.reachedEdge()) {
+      powerups.remove(pu);
     }
-  } // Displaying projectiles
-  for (int i = 0; i < projectiles.size(); i++) {
-    Projectile p = projectiles.get(i);
-    p.display();
-    p.move();
-    if (p.reachedSide()) {
-      projectiles.remove(i);
+    if (pu.intersect(tank1)) {
+      if (pu.type == 'h') {
+        tank1.health = tank1.health+100;
+        powerups.remove(pu);
+      } else if (pu.type=='a') {
+        tank1.ammo = tank1.ammo + 200000;
+        powerups.remove(pu);
+      } else if (pu.type=='t') {
+        tank1.turretCount = tank1.turretCount + 1;
+        powerups.remove(pu);
+      }
     }
   }
+
+
+
+// Display and remove obsticles
+for (int i = 0; i < obstacles.size(); i++) {
+  Obstacle obs = obstacles.get(i);
+  obs.display();
+  obs.move();
+  if (obs.reachedEdge()) {
+    obstacles.remove(i);
+  }
+  
+  //detect collision to tank
+  if (tank1.intersect(obs)) {
+    tank1.health = tank1.health - 25;
+  }
+} 
+
+// Render and detect collision
+for (int i = 0; i < projectiles.size(); i++) {
+  Projectile p = projectiles.get(i);
+  for (int j = 0; j < obstacles.size(); j++) {
+    Obstacle obs = obstacles.get(j);
+    if (p.intersect(obs)) {
+      score = score + 100;
+      projectiles.remove(i);
+      obstacles.remove(j);
+      continue;
+    }
+  }
+  p.display();
+  p.move();
+  if (p.reachedEdge()) {
+    projectiles.remove(i);
+  }
+}
+println("Objects in Memory:"+obstacles.size());
+println("Projectiles in Memory:"+projectiles.size());
 }
 
 void scorePanel() {
@@ -55,7 +106,9 @@ void scorePanel() {
   rect(width/2, 30, width, 60);
   fill(127);
   textSize(33);
-  text("Score:" + score, 50, 35);
+  text("Score:" + tank1.score, width/2, 25);
+  text("Health:"+ tank1.health, width/2-150, 25);
+  text("Ammo:"+ tank1.ammo, width/2+150, 25);
 }
 
 
@@ -73,6 +126,21 @@ void scorePanel() {
 
 
 void mousePressed() {
+  if (tank1.turretCount == 1) {
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+  } else if (tank1.turretCount == 2) {
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+  } else if (tank1.turretCount == 3) {
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+  } else if (tank1.turretCount == 4) {
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+    projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
+  }
   projectiles.add(new Projectile(int(tank1.x), int(tank1.y)));
 }
 

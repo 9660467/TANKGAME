@@ -30,7 +30,7 @@ class Obstacle {
     h = 100;
 
     object1 = loadImage("object.png");
-    speed = 3;
+    speed = 5;
     health = 3;
   }
 
@@ -55,10 +55,10 @@ class Obstacle {
     }
   }
 
-  boolean reachedSide() {
+  boolean reachedEdge() {
 
     // Logic for when to return true
 
-    return x >= width+150 || x<= -150 || y > height+150 || y < -150;
+    return x >= width+100 || x<= -100 || y > height+100 || y < -100;
   }
 }
