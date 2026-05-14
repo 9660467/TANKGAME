@@ -6,7 +6,7 @@ class Tank {
 
   // constucter
   Tank() {
-    this.speed = 15;
+    this.speed = 20;
     this.health = 100;
     this.ammo = 100;
     x = 100;

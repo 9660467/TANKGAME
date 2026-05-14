@@ -12,7 +12,7 @@ void setup() {
   bg = loadImage("bg1.png");
   tank1 = new Tank();
   score = 0;
-  obsTimer = new Timer(1000);
+  obsTimer = new Timer(1500);
   obsTimer.start();
   puTimer = new Timer(5000);
   puTimer.start();
@@ -42,11 +42,9 @@ void draw() {
   // Display and remove powerups
   for (int i = 0; i < powerups.size(); i ++) {
     PowerUp pu = powerups.get(i);
-    pu.display();
-    pu.move();
-    if(pu.reachedEdge()) {
-      powerups.remove(pu);
-    }
+    //if (pu.reachedEdge()) {
+    //  powerups.remove(pu);
+    //}
     if (pu.intersect(tank1)) {
       if (pu.type == 'h') {
         tank1.health = tank1.health+100;
@@ -59,45 +57,50 @@ void draw() {
         powerups.remove(pu);
       }
     }
+    pu.display();
+    pu.move();
   }
 
 
 
-// Display and remove obsticles
-for (int i = 0; i < obstacles.size(); i++) {
-  Obstacle obs = obstacles.get(i);
-  obs.display();
-  obs.move();
-  if (obs.reachedEdge()) {
-    obstacles.remove(i);
-  }
-  
-  //detect collision to tank
-  if (tank1.intersect(obs)) {
-    tank1.health = tank1.health - 25;
-  }
-} 
 
-// Render and detect collision
-for (int i = 0; i < projectiles.size(); i++) {
-  Projectile p = projectiles.get(i);
-  for (int j = 0; j < obstacles.size(); j++) {
-    Obstacle obs = obstacles.get(j);
-    if (p.intersect(obs)) {
-      score = score + 100;
-      projectiles.remove(i);
-      obstacles.remove(j);
-      continue;
+  // Display and remove obsticles
+  for (int i = 0; i < obstacles.size(); i++) {
+    Obstacle obs = obstacles.get(i);
+    obs.display();
+    obs.move();
+    if (obs.reachedEdge()) {
+      obstacles.remove(i);
+    }
+
+    //detect collision to tank
+    if (tank1.intersect(obs)) {
+      tank1.health = tank1.health - 25;
+      obstacles.remove(i);
     }
   }
-  p.display();
-  p.move();
-  if (p.reachedEdge()) {
-    projectiles.remove(i);
+
+  // Render and detect collision
+  for (int i = 0; i < projectiles.size(); i++) {
+    Projectile p = projectiles.get(i);
+    for (int j = 0; j < obstacles.size(); j++) {
+      Obstacle obs = obstacles.get(j);
+      if (p.intersect(obs)) {
+        score = score + 100;
+        projectiles.remove(i);
+        obstacles.remove(j);
+        continue;
+      }
+    }
+    p.display();
+    p.move();
+    if (p.reachedEdge()) {
+      projectiles.remove(i);
+    }
   }
-}
-println("Objects in Memory:"+obstacles.size());
-println("Projectiles in Memory:"+projectiles.size());
+  println("Objects in Memory:"+obstacles.size());
+  println("Projectiles in Memory:"+projectiles.size());
+  println("PowerUps in Memory:"+powerups.size());
 }
 
 void scorePanel() {
@@ -107,8 +110,8 @@ void scorePanel() {
   fill(127);
   textSize(33);
   text("Score:" + tank1.score, width/2, 25);
-  text("Health:"+ tank1.health, width/2-150, 25);
-  text("Ammo:"+ tank1.ammo, width/2+150, 25);
+  text("Health:"+ tank1.health, width/2-250, 25);
+  text("Ammo:"+ tank1.ammo, width/2+250, 25);
 }
 
 

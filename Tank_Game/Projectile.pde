@@ -1,21 +1,21 @@
 class Projectile {
-  float x, y, w, h, speed, health;
-  // PImage projectile1;
+  float x, y, w, h, speed;
+  PImage proj;
   char idir;
 
-
+  
   // Constructer
   Projectile(int x, int y) {
     this.x = x;
     this.y = y;
+    this.proj = loadImage("projectile.png");
     w = 10;
     h = 10;
-    speed = 10;
+    speed = 5;
   }
 
   void display() {
-    rectMode(CENTER);
-    rect(x, y, w, h);
+    image(proj, x, y, w, h);
   }
 
   void move() {
@@ -32,6 +32,6 @@ class Projectile {
     }
   }
   boolean reachedEdge () {
-    return x >= width+150 || x <= -150 || y <= width+150 || y >= width-150;
+    return (y < -10 || y > height + 10 || x < -10 || x > width + 10);
   }
 }

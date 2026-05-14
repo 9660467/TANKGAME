@@ -1,6 +1,6 @@
 class PowerUp {
-  float x, y, w, h, speed, type;
- // char type;
+  float x, y, w, h, speed;
+  char type;
 
 
   // Constucter
@@ -9,8 +9,7 @@ class PowerUp {
     h = 100;
     speed = 5;
     x = random(width);
-    y = -100;
-    speed = 3;
+    y = -50;
     if (int(random(4))==2) {
       type = 'h'; // Health
     } else if (random(3)==1) {
@@ -46,7 +45,7 @@ class PowerUp {
     y = y + speed;
   }
   boolean reachedEdge () {
-    return x >= width+150 || x <= -150 || y <= width+150 || y >= width-150;
+        return (y < -10 || y > height + 10 || x < -10 || x > width + 10);
   }
 
   boolean intersect (Tank t) {
